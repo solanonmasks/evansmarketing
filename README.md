@@ -145,10 +145,22 @@ this folder and it is live:
 The reference files are matched closely on colour, type and spacing. Five
 places differ, each for a reason:
 
-1. **Responsive layout.** The reference had no breakpoints at all — every grid
-   was fixed. Tablet and mobile layouts are authored here (see the last section
-   of `styles.css`): multi-column sections collapse to one column, the
-   five-step process stacks, the header splits onto two rows.
+1. **Responsive layout** follows the mobile handoff: breakpoints at 860px and
+   480px, with a 1100px block for the tablet range the handoff flags as
+   untuned. The handoff's prototype implements mobile by matching inline-style
+   substrings with `!important`; as it instructs, each rule is expressed here
+   as a normal style on the component that owns it.
+
+   Two departures, both to stop text being clipped:
+   - **Hero headline size.** The handoff asks for `19vw` (and `21vw` under
+     480px). "THROUGH" is 5.4x the font size in Archivo Black, so at 390px that
+     wants 442px of ink in a 350px gutter and the word gets cropped. It uses
+     `15.6vw` — the same factor the desktop rule uses, and the largest that fits
+     the longest word from 300px up.
+   - **Full-width CTA buttons** drop the desktop `white-space: nowrap`. "Book
+     your free strategy session" has a min-content width of ~359px, which would
+     push its grid parent wider than a 360px screen; as centred blocks the
+     labels wrap instead.
 2. **About stat labels.** The reference still colours these `#C9BCAE`, a
    light tone left over from an earlier dark hero — 1.7:1 against cream,
    effectively invisible. They use `#6B5F52`, which is what the handoff's own

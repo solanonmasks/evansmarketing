@@ -1116,9 +1116,12 @@ input, textarea, button, select { font-family: inherit; }
 .form__status:empty { display: none; }
 
 /* 7. RESPONSIVE ------------------------------------------------------------ */
-/* The reference had no breakpoints; these are authored here. */
+/* Breakpoints follow the mobile handoff: 860px for the phone/small-tablet
+   layout, 480px for narrow phones. The 1100px block is an intermediate the
+   handoff flags as untuned — it keeps the five-step process and the two-column
+   spreads from cramping between the desktop and mobile layouts. */
 
-@media (max-width: 1080px) {
+@media (max-width: 1100px) {
   .process__steps { grid-template-columns: repeat(3, 1fr); }
   .process__head { gap: 40px; }
   .exceptional__grid,
@@ -1128,61 +1131,147 @@ input, textarea, button, select { font-family: inherit; }
 }
 
 @media (max-width: 860px) {
-  /* Header stacks: wordmark on top, nav and CTA on a second row. */
+  /* Gutter token drops to 20px so anything still keyed to it — the hero scan
+     line's bleed, for one — follows the section padding below. */
+  :root { --pad-x: 20px; --pad-x-wide: 20px; }
+
+  /* --- Header: stacked, centred masthead with thumb-sized targets --------- */
   .site-header {
     grid-template-columns: 1fr;
     justify-items: center;
-    gap: 16px;
-    padding: 18px var(--pad-x);
+    row-gap: 16px;
+    padding: 16px 20px;
+    text-align: center;
   }
-  .site-nav { order: 2; flex-wrap: wrap; justify-content: center; gap: 20px; }
-  .wordmark { order: 1; }
-  .header-cta { order: 3; justify-content: center; }
+  .wordmark   { order: 1; font-size: 22px; letter-spacing: 0.16em; }
+  .site-nav   { order: 2; flex-wrap: wrap; justify-content: center; gap: 22px; }
+  .site-nav a { padding: 12px 0; }   /* ~44px tap target */
+  .header-cta { order: 3; width: 100%; justify-content: center; }
+  /* Four short links fit on two rows at this scale, so no hamburger. */
+  .header-cta .btn {
+    width: 100%;
+    padding: 16px 22px;
+    text-align: center;
+  }
 
-  /* Every fixed multi-column grid collapses to one column. */
+  /* --- Every desktop grid collapses to one column ------------------------- */
   .hero__foot,
   .solutions,
   .masthead__foot,
   .process__head,
+  .process__steps,
   .founder,
   .exceptional__grid,
   .contact__grid,
-  .cta-band { grid-template-columns: 1fr; }
+  .contact-form,
+  .cta-band {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  .founder { gap: 1px; }             /* the hairline gutter is structural */
+  .cta-band { justify-items: start; }
 
-  .hero__foot { gap: 34px; padding-top: 40px; }
-  .solutions__body { columns: 1; column-rule: none; }
-  .process__steps { grid-template-columns: repeat(2, 1fr); }
-  .step h3 { min-height: 0; }
+  /* Stat strips halve rather than stack. */
+  .founder__stats { grid-template-columns: 1fr 1fr; gap: 22px; }
 
-  .founder__portrait { min-height: 460px; }
-  .cta-band { gap: 28px; justify-items: start; }
-  .acc-panel { gap: 0; }
-  .quote-band { min-height: 460px; padding: 64px var(--pad-x); }
-  .slab { padding: 90px var(--pad-x); }
-}
-
-@media (max-width: 560px) {
-  :root { --pad-x: 20px; --pad-x-wide: 20px; }
-
-  .hero { padding: 40px var(--pad-x) 36px; }
-  .hero__title { font-size: clamp(46px, 16.5vw, 90px); }
-  .stats { gap: 28px; }
-  .btn { padding: 18px 26px; font-size: 11.5px; letter-spacing: 0.16em; }
-
-  .process__steps { grid-template-columns: 1fr; }
-  .contact-form { grid-template-columns: 1fr; }
-  .field--wide { grid-column: span 1; }
+  /* Full-width form fields no longer span. */
+  .field--wide,
   .form__foot,
   .form__status { grid-column: span 1; }
 
-  .acc-trigger { gap: 14px; }
-  .acc-item { padding: 0 4px; }
-  .marquee__list { font-size: 18px; }
-  .marquee__list span { padding: 0 24px; }
-  .exceptional__left img { height: 240px; }
-  .founder__stats { grid-template-columns: 1fr 1fr; }
-  .slab { padding: 70px var(--pad-x); }
-  .site-footer { gap: 12px; }
+  /* The drop-cap body goes single column, no rule, no max-width. */
+  .solutions__body {
+    columns: 1;
+    column-rule: none;
+    max-width: none;
+  }
+
+  /* --- Section rhythm: 20px gutters, ~40% less vertical padding ----------- */
+  .hero                { padding: 34px 20px 40px; }
+  .masthead            { padding: 34px 20px 40px; }
+  .masthead--about     { padding: 34px 20px 40px; }
+  .index               { padding: 8px 20px 44px; }
+  .process,
+  .exceptional,
+  .contact             { padding: 48px 20px; }
+  .solutions__copy     { padding: 44px 20px; }
+  .founder__bio        { padding: 44px 20px; }
+  .slab                { padding: 64px 20px; }
+  .quote-band          { padding: 52px 20px; }
+  .ecosystem           { padding: 30px 20px; }
+  .cta-band            { padding: 40px 20px; }
+  .site-footer         { padding: 24px 20px; }
+  /* The marquee keeps zero side padding so its track bleeds off-screen. */
+  .brands              { padding: 40px 0 34px; }
+  .brands__head        { padding: 0 20px 24px; }
+  .brands__categories  { padding: 20px 20px 0; line-height: 1.9; }
+
+  /* --- Display type: sized for the viewport, not shrunk desktop ----------- */
+  /* The handoff asks for clamp(52px, 19vw, 104px) here (and 21vw under 480px),
+     but "THROUGH" is 5.4x the font size in Archivo Black: at 390px that wants
+     442px of ink in a 350px gutter, and the word gets clipped. 15.6vw — the
+     same factor the desktop rule uses — is the largest that fits the longest
+     word from 300px up, so the headline stays three uncropped lines. */
+  .hero__title {
+    font-size: clamp(40px, 15.6vw, 120px);
+    letter-spacing: -0.035em;
+  }
+  .h-display,
+  .masthead__title,
+  .masthead--about .masthead__title {
+    font-size: clamp(44px, 16vw, 92px);
+    letter-spacing: -0.035em;
+  }
+  .h-section,
+  .process__head .h-section,
+  .founder__bio h2,
+  .contact h2          { font-size: clamp(28px, 9.4vw, 46px); }
+  .quote-band p,
+  .slab p              { font-size: clamp(22px, 7.2vw, 34px); }
+  .standfirst          { font-size: 18px; }
+  .cta-band p          { font-size: clamp(21px, 6.6vw, 30px); }
+  .acc-title           { font-size: clamp(19px, 5.6vw, 26px); }
+  .marquee__list       { font-size: 15px; }
+  .marquee__list span  { padding: 0 18px; }
+
+  /* --- Components -------------------------------------------------------- */
+  .quote-band,
+  .founder__portrait      { min-height: 380px; }
+  .exceptional__left img  { height: 220px; }
+  .step h3                { min-height: 0; }
+  .acc-trigger            { padding: 22px 0; }
+  .acc-panel              { gap: 0; }
+
+  /* Primary CTAs go full width at thumb height. The desktop `nowrap` has to
+     go with them: "Book your free strategy session" has a min-content width of
+     ~359px, which would push its grid parent wider than a 360px screen. As a
+     centred block, the label wraps cleanly instead. */
+  .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 18px 22px;
+    white-space: normal;
+  }
+  /* ...but the compact header button is sized by .header-cta above. */
+
+  .contact-form { gap: 20px; }
+  /* 16px keeps iOS from zooming the page on focus. */
+  .field input,
+  .field textarea { font-size: 16px; }
+
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* The headline needs no separate size here: 15.6vw already fits at 300px. */
+  .founder__stats { grid-template-columns: 1fr; }
+  .stats          { gap: 28px; }
 }
 
 /* Respect a reduced-motion preference: stop the marquees, drop smooth scroll,
