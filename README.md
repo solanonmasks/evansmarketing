@@ -152,11 +152,18 @@ places differ, each for a reason:
    as a normal style on the component that owns it.
 
    Two departures, both to stop text being clipped:
-   - **Hero headline size.** The handoff asks for `19vw` (and `21vw` under
-     480px). "THROUGH" is 5.4x the font size in Archivo Black, so at 390px that
-     wants 442px of ink in a 350px gutter and the word gets cropped. It uses
-     `15.6vw` — the same factor the desktop rule uses, and the largest that fits
-     the longest word from 300px up.
+   - **Hero headline.** On mobile each of the three lines is sized
+     individually so it spans the full screen width — the headline runs edge to
+     edge, flush on both sides, and fills far more of the fold than one shared
+     size could. A single size is capped by the widest word ("THROUGH" is 5.4x
+     its font size in Archivo Black), which left the headline looking timid on a
+     phone; the handoff's own `19vw`/`21vw` overflowed and cropped it.
+
+     The per-line multipliers in `styles.css` are `100 / (ink width per px of
+     font size)` for each word, measured in the browser, less a 3% safety
+     margin. **If the headline wording changes, those must be re-measured**
+     or the lines will no longer align. Desktop is unaffected — all three lines
+     share the h1's size there, exactly as before.
    - **Full-width CTA buttons** drop the desktop `white-space: nowrap`. "Book
      your free strategy session" has a min-content width of ~359px, which would
      push its grid parent wider than a 360px screen; as centred blocks the
