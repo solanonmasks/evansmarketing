@@ -493,6 +493,9 @@ input, textarea, button, select { font-family: inherit; }
     typeDevelop 1.25s cubic-bezier(0.16, 1, 0.3, 1) both,
     fillDrift 26s ease-in-out 1.3s infinite alternate;
 }
+/* One word per line. On desktop all three share the h1's size, exactly as the
+   old <br>s did; on mobile each is sized individually — see the 860px block. */
+.hero__title span { display: block; }
 
 /* Red scan line that "develops" the type on load. It bleeds past both gutters
    so it reads as crossing the whole page; .hero clips the overhang. */
@@ -1208,15 +1211,23 @@ input, textarea, button, select { font-family: inherit; }
   .brands__categories  { padding: 20px 20px 0; line-height: 1.9; }
 
   /* --- Display type: sized for the viewport, not shrunk desktop ----------- */
-  /* The handoff asks for clamp(52px, 19vw, 104px) here (and 21vw under 480px),
-     but "THROUGH" is 5.4x the font size in Archivo Black: at 390px that wants
-     442px of ink in a 350px gutter, and the word gets clipped. 15.6vw — the
-     same factor the desktop rule uses — is the largest that fits the longest
-     word from 300px up, so the headline stays three uncropped lines. */
+  /* A single size for all three lines is capped by the widest word, which left
+     the headline timid on a phone. Instead each line gets its own size so it
+     spans the full screen width, and the headline reads as a poster: flush on
+     both edges, edge to edge.
+
+     Each multiplier is 100 / (ink width per px of font size) for that word in
+     Archivo Black at -0.05em, measured in the browser, less a 3% safety margin
+     for glyph bearings. Change the word and you must re-measure. */
   .hero__title {
-    font-size: clamp(40px, 15.6vw, 120px);
-    letter-spacing: -0.035em;
+    /* Cancel the hero's 20px gutter so the type runs to both edges. */
+    margin-left: calc(-1 * var(--pad-x));
+    margin-right: calc(-1 * var(--pad-x));
+    letter-spacing: -0.05em;
   }
+  .hero__title span:nth-child(1) { font-size: 20.7vw; }   /* GROWTH  */
+  .hero__title span:nth-child(2) { font-size: 18.3vw; }   /* THROUGH */
+  .hero__title span:nth-child(3) { font-size: 22.1vw; }   /* INSIGHT */
   .h-display,
   .masthead__title,
   .masthead--about .masthead__title {
