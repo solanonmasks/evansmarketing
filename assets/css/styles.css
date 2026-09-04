@@ -608,6 +608,9 @@ input, textarea, button, select { font-family: inherit; }
 
 .ecosystem {
   position: relative;
+  /* It is a <figure>, so the UA's `margin: 1em 40px` has to go or the panel
+     sits inset from its grid cell instead of filling it. */
+  margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1119,10 +1122,13 @@ input, textarea, button, select { font-family: inherit; }
 .form__status:empty { display: none; }
 
 /* 7. RESPONSIVE ------------------------------------------------------------ */
-/* Breakpoints follow the mobile handoff: 860px for the phone/small-tablet
-   layout, 480px for narrow phones. The 1100px block is an intermediate the
-   handoff flags as untuned — it keeps the five-step process and the two-column
-   spreads from cramping between the desktop and mobile layouts. */
+/* Mobile is its own edition, not a narrowed desktop. The governing idea from
+   the handoff: on a phone the display type is sized in viewport units so it
+   keeps the desktop's proportions — type that spans edge to edge at 1440px
+   should span edge to edge at 390px too.
+
+   Breakpoints are the handoff's 860px and 480px. The 1100px block is an
+   intermediate it flags as untuned, keeping the tablet range from cramping. */
 
 @media (max-width: 1100px) {
   .process__steps { grid-template-columns: repeat(3, 1fr); }
@@ -1134,28 +1140,22 @@ input, textarea, button, select { font-family: inherit; }
 }
 
 @media (max-width: 860px) {
-  /* Gutter token drops to 20px so anything still keyed to it — the hero scan
-     line's bleed, for one — follows the section padding below. */
-  :root { --pad-x: 20px; --pad-x-wide: 20px; }
+  :root { --pad-x: 22px; --pad-x-wide: 22px; }
 
-  /* --- Header: stacked, centred masthead with thumb-sized targets --------- */
+  /* --- Header: stacked centred masthead ---------------------------------- */
   .site-header {
     grid-template-columns: 1fr;
     justify-items: center;
-    row-gap: 16px;
-    padding: 16px 20px;
+    row-gap: 14px;
+    padding: 14px 20px 16px;
     text-align: center;
   }
-  .wordmark   { order: 1; font-size: 22px; letter-spacing: 0.16em; }
-  .site-nav   { order: 2; flex-wrap: wrap; justify-content: center; gap: 22px; }
-  .site-nav a { padding: 12px 0; }   /* ~44px tap target */
+  .wordmark   { order: 1; font-size: 20px; letter-spacing: 0.18em; }
+  .site-nav   { order: 2; flex-wrap: wrap; justify-content: center;
+                gap: 20px; font-size: 11.5px; }
+  .site-nav a { padding: 10px 0; }        /* ~44px tap target */
   .header-cta { order: 3; width: 100%; justify-content: center; }
-  /* Four short links fit on two rows at this scale, so no hamburger. */
-  .header-cta .btn {
-    width: 100%;
-    padding: 16px 22px;
-    text-align: center;
-  }
+  .header-cta .btn { width: 100%; padding: 16px 22px; text-align: center; }
 
   /* --- Every desktop grid collapses to one column ------------------------- */
   .hero__foot,
@@ -1169,121 +1169,206 @@ input, textarea, button, select { font-family: inherit; }
   .contact-form,
   .cta-band {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 30px;
     align-items: start;
   }
-  .founder { gap: 1px; }             /* the hairline gutter is structural */
+  .founder  { gap: 1px; }                 /* the hairline gutter is structural */
   .cta-band { justify-items: start; }
 
-  /* Stat strips halve rather than stack. */
-  .founder__stats { grid-template-columns: 1fr 1fr; gap: 22px; }
-
-  /* Full-width form fields no longer span. */
+  /* A grid track's automatic minimum is its content's min-content width, so the
+     gutter-breaking images below (width: 100% + 44px) would otherwise stretch
+     their column past the screen and drag the sibling text out with it. */
+  .hero__foot > *,
+  .solutions > *,
+  .masthead__foot > *,
+  .process__head > *,
+  .founder > *,
+  .exceptional__grid > *,
+  .contact__grid > *,
+  .contact-form > * { min-width: 0; }
   .field--wide,
   .form__foot,
   .form__status { grid-column: span 1; }
+  .solutions__body { columns: 1; column-rule: none; max-width: none; }
 
-  /* The drop-cap body goes single column, no rule, no max-width. */
-  .solutions__body {
-    columns: 1;
-    column-rule: none;
-    max-width: none;
+  /* --- Hero: a full-height cover ----------------------------------------- */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 22px 44px;
   }
+  /* Pushes the supporting block down so the type sits optically centred. */
+  .hero__slab  { margin: 0 0 auto; padding-top: 6vh; }
+  .hero__foot  { padding-top: 34px; gap: 24px; }
+  .hero__intro { font-size: 15px; line-height: 1.6; }
 
-  /* --- Section rhythm: 20px gutters, ~40% less vertical padding ----------- */
-  .hero                { padding: 34px 20px 40px; }
-  .masthead            { padding: 34px 20px 40px; }
-  .masthead--about     { padding: 34px 20px 40px; }
-  .index               { padding: 8px 20px 44px; }
-  .process,
-  .exceptional,
-  .contact             { padding: 48px 20px; }
-  .solutions__copy     { padding: 44px 20px; }
-  .founder__bio        { padding: 44px 20px; }
-  .slab                { padding: 64px 20px; }
-  .quote-band          { padding: 52px 20px; }
-  .ecosystem           { padding: 30px 20px; }
-  .cta-band            { padding: 40px 20px; }
-  .site-footer         { padding: 24px 20px; }
-  /* The marquee keeps zero side padding so its track bleeds off-screen. */
-  .brands              { padding: 40px 0 34px; }
-  .brands__head        { padding: 0 20px 24px; }
-  .brands__categories  { padding: 20px 20px 0; line-height: 1.9; }
+  /* The handoff asks for a single 25.5vw here (26.5vw under 480px). That
+     cannot fit: "THROUGH" is 5.26x its font size in Archivo Black at this
+     tracking, so 25.5vw wants 523px of ink in a 346px gutter at 390px and
+     loses two characters off each edge. A single size is capped by the widest
+     word anyway, which leaves the other two lines short of the edges.
 
-  /* --- Display type: sized for the viewport, not shrunk desktop ----------- */
-  /* A single size for all three lines is capped by the widest word, which left
-     the headline timid on a phone. Instead each line gets its own size so it
-     spans the full screen width, and the headline reads as a poster: flush on
-     both edges, edge to edge.
-
-     Each multiplier is 100 / (ink width per px of font size) for that word in
-     Archivo Black at -0.05em, measured in the browser, less a 3% safety margin
-     for glyph bearings. Change the word and you must re-measure. */
+     So each line is sized individually to span the full width — which is what
+     the handoff actually asks for ("edge to edge at 390px"), just achieved per
+     line. Multipliers are 100 / (ink width per px of font size) for each word,
+     measured in the browser at -0.055em, less a 3% safety margin.
+     RE-MEASURE THESE IF THE HEADLINE WORDING CHANGES. */
   .hero__title {
-    /* Cancel the hero's 20px gutter so the type runs to both edges. */
+    line-height: 0.8;
+    letter-spacing: -0.055em;
+    /* Break out of the hero's gutter: the sizes below are computed against the
+       full viewport width. */
     margin-left: calc(-1 * var(--pad-x));
     margin-right: calc(-1 * var(--pad-x));
-    letter-spacing: -0.05em;
   }
-  .hero__title span:nth-child(1) { font-size: 20.7vw; }   /* GROWTH  */
-  .hero__title span:nth-child(2) { font-size: 18.3vw; }   /* THROUGH */
-  .hero__title span:nth-child(3) { font-size: 22.1vw; }   /* INSIGHT */
+  .hero__title span:nth-child(1) { font-size: 20.9vw; }   /* GROWTH  */
+  .hero__title span:nth-child(2) { font-size: 18.4vw; }   /* THROUGH */
+  .hero__title span:nth-child(3) { font-size: 22.4vw; }   /* INSIGHT */
+
+  /* --- Cover-scale section heads ----------------------------------------- */
+  /* The handoff asks for 20vw (21vw under 480px), but "SERVICES" is 5.19x its
+     font size and would run 425px wide in a 346px gutter at 390px. Full-bleed
+     like the hero, at the largest size that fits the longer of the two page
+     titles, so it spans the screen without cropping. */
   .h-display,
   .masthead__title,
   .masthead--about .masthead__title {
-    font-size: clamp(44px, 16vw, 92px);
-    letter-spacing: -0.035em;
+    font-size: 18.7vw;
+    line-height: 0.82;
+    letter-spacing: -0.05em;
+    margin-left: calc(-1 * var(--pad-x));
+    margin-right: calc(-1 * var(--pad-x));
   }
+  /* The handoff asks for 13.5vw (14.5vw under 480px). "EXCEPTIONAL" is 8.02x
+     its font size, so 13.5vw wants 422px of ink in a 346px gutter at 390px.
+     Section heads sit in the text column rather than breaking the gutter like
+     the hero and the page <h1>, so this is the largest that fits the longest
+     word from 320px up. */
   .h-section,
   .process__head .h-section,
   .founder__bio h2,
-  .contact h2          { font-size: clamp(28px, 9.4vw, 46px); }
+  .contact h2 {
+    font-size: 10.7vw;
+    line-height: 0.86;
+    letter-spacing: -0.04em;
+  }
+
+  /* --- Pull quotes hold the page ----------------------------------------- */
   .quote-band p,
-  .slab p              { font-size: clamp(22px, 7.2vw, 34px); }
-  .standfirst          { font-size: 18px; }
-  .cta-band p          { font-size: clamp(21px, 6.6vw, 30px); }
-  .acc-title           { font-size: clamp(19px, 5.6vw, 26px); }
-  .marquee__list       { font-size: 15px; }
-  .marquee__list span  { padding: 0 18px; }
+  .slab p     { font-size: 8.6vw; line-height: 1.16; }
+  .cta-band p { font-size: 8vw;   line-height: 1.14; }
+  .standfirst { font-size: 20px;  line-height: 1.45; }
 
-  /* --- Components -------------------------------------------------------- */
-  .quote-band,
-  .founder__portrait      { min-height: 380px; }
-  .exceptional__left img  { height: 220px; }
-  .step h3                { min-height: 0; }
-  .acc-trigger            { padding: 22px 0; }
-  .acc-panel              { gap: 0; }
+  /* --- Section rhythm: 22px gutter --------------------------------------- */
+  .index           { padding: 0 22px 48px; }
+  .process,
+  .exceptional,
+  .contact         { padding: 60px 22px; }
+  .solutions__copy,
+  .founder__bio    { padding: 56px 22px; }
+  .slab            { padding: 96px 22px; }   /* kept generous — the breather */
+  .quote-band      { padding: 0 22px; }      /* height is driven by 78vh */
+  .ecosystem       { padding: 36px 22px; }
+  .cta-band        { padding: 48px 22px; }
+  .masthead,
+  .masthead--about { padding-left: 22px; padding-right: 22px; }
+  .site-footer     { padding: 26px 22px; }
+  /* The marquee keeps zero side padding so its track still bleeds off-screen. */
+  .brands             { padding: 48px 0 40px; }
+  .brands__head       { padding: 0 22px 26px; }
+  .brands__categories { padding: 22px 22px 0; line-height: 2; }
 
-  /* Primary CTAs go full width at thumb height. The desktop `nowrap` has to
-     go with them: "Book your free strategy session" has a min-content width of
-     ~359px, which would push its grid parent wider than a 360px screen. As a
-     centred block, the label wraps cleanly instead. */
+  /* --- Imagery: full-bleed and tall -------------------------------------- */
+  .quote-band        { min-height: 78vh; }
+  .founder__portrait,
+  .ecosystem         { min-height: 68vh; }
+  /* These two break the gutter to sit edge to edge. */
+  .exceptional__left img,
+  .ecosystem img {
+    width: calc(100% + 44px);
+    max-width: none;
+    margin-left: -22px;
+  }
+  .exceptional__left img { height: 62vw; }
+
+  /* --- Stats become hairline-ruled editorial rows, not columns ------------ */
+  .stats {
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+  }
+  .stats > div,
+  .founder__stats > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .stats > div {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(18, 17, 16, 0.22);
+  }
+  .stats .stat__figure { font-size: 14vw; line-height: 0.9; }
+
+  .founder__stats { grid-template-columns: 1fr; gap: 0; }
+  .founder__stats > div {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule-light-20);
+  }
+  .founder__stats .stat__figure { font-size: 13vw; line-height: 0.9; }
+  /* The third row is a phrase rather than a numeral, so it takes a size that
+     balances the row instead of the numerals' 13vw. */
+  .founder__stats .stat__range { font-size: 5.5vw; line-height: 1.05; }
+
+  .stat__label { padding-top: 0; text-align: right; }
+
+  /* --- Marquee keeps its swagger ----------------------------------------- */
+  .marquee__list      { font-size: 8vw; }
+  .marquee__list span { padding: 0 22px; }
+
+  /* --- Buttons: full width, thumb height ---------------------------------- */
+  /* The desktop `nowrap` goes with them: "Book your free strategy session" has
+     a min-content width of ~359px, which would push its grid parent wider than
+     a 360px screen. As centred blocks the labels wrap instead. */
   .btn {
     display: block;
     width: 100%;
     text-align: center;
-    padding: 18px 22px;
+    padding: 19px 22px;
     white-space: normal;
   }
-  /* ...but the compact header button is sized by .header-cta above. */
 
-  .contact-form { gap: 20px; }
+  /* --- Accordion ---------------------------------------------------------- */
+  .acc-item    { padding: 0 18px; }
+  .acc-trigger { padding: 24px 0; gap: 14px; }
+  .acc-title   { font-size: 7.4vw; line-height: 1.02; }
+  .acc-panel   { gap: 0; }
+
+  /* --- Process reads as numbered entries ---------------------------------- */
+  .step       { padding-top: 18px; }
+  .step__num  { font-size: 11vw; }
+  .step h3    { min-height: 0; }
+
+  /* --- Form --------------------------------------------------------------- */
+  .contact-form { gap: 22px; }
   /* 16px keeps iOS from zooming the page on focus. */
   .field input,
   .field textarea { font-size: 16px; }
 
+  /* --- Footer -------------------------------------------------------------- */
   .site-footer {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
+  .site-footer .footer-mark { font-size: 22px; }
 }
 
-@media (max-width: 480px) {
-  /* The headline needs no separate size here: 15.6vw already fits at 300px. */
-  .founder__stats { grid-template-columns: 1fr; }
-  .stats          { gap: 28px; }
-}
+/* No 480px block: the hero lines, the page <h1> and the section heads are all
+   already sized in vw against the longest word they must hold, so they scale
+   correctly all the way down without a second step. */
 
 /* Respect a reduced-motion preference: stop the marquees, drop smooth scroll,
    and swap the heavy background blur for a plain wash. */

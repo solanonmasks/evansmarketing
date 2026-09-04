@@ -145,34 +145,38 @@ this folder and it is live:
 The reference files are matched closely on colour, type and spacing. Five
 places differ, each for a reason:
 
-1. **Responsive layout** follows the mobile handoff: breakpoints at 860px and
-   480px, with a 1100px block for the tablet range the handoff flags as
-   untuned. The handoff's prototype implements mobile by matching inline-style
-   substrings with `!important`; as it instructs, each rule is expressed here
-   as a normal style on the component that owns it.
+1. **Responsive layout** follows the mobile handoff, which treats mobile as its
+   own edition rather than a narrowed desktop: a full-height cover hero,
+   display type sized in viewport units, stats as hairline-ruled rows,
+   full-bleed tall imagery. Breakpoint at 860px, with a 1100px block for the
+   tablet range the handoff flags as untuned. The handoff's prototype matches
+   inline-style substrings with `!important`; as it instructs, each rule is
+   expressed here as a normal style on the component that owns it.
 
-   Two departures, both to stop text being clipped:
-   - **Hero headline.** On mobile each of the three lines is sized
-     individually so it spans the full screen width — the headline runs edge to
-     edge, flush on both sides, and fills far more of the fold than one shared
-     size could. A single size is capped by the widest word ("THROUGH" is 5.4x
-     its font size in Archivo Black), which left the headline looking timid on a
-     phone; the handoff's own `19vw`/`21vw` overflowed and cropped it.
+   **Display type is sized to fit the longest word it must hold.** The
+   handoff's vw values were authored against a narrower fallback face and crop
+   badly in Archivo Black, so three were re-derived by measuring the real font
+   in the browser:
 
-     The per-line multipliers in `styles.css` are `100 / (ink width per px of
-     font size)` for each word, measured in the browser, less a 3% safety
-     margin. **If the headline wording changes, those must be re-measured**
-     or the lines will no longer align. Desktop is unaffected — all three lines
-     share the h1's size there, exactly as before.
-   - **Full-width CTA buttons** drop the desktop `white-space: nowrap`. "Book
-     your free strategy session" has a min-content width of ~359px, which would
-     push its grid parent wider than a 360px screen; as centred blocks the
-     labels wrap instead.
-2. **About stat labels.** The reference still colours these `#C9BCAE`, a
-   light tone left over from an earlier dark hero — 1.7:1 against cream,
-   effectively invisible. They use `#6B5F52`, which is what the handoff's own
-   rule calls for ("label greys are ground-dependent: `#6B5F52` on light,
-   `#C9BCAE` on dark"). The Home hero labels were already corrected upstream.
+   | | Handoff | Here | Why |
+   | --- | --- | --- | --- |
+   | Hero headline | `25.5vw` | per line: `20.9` / `18.4` / `22.4vw` | "THROUGH" is 5.26x its font size; 25.5vw wants 523px of ink in a 346px gutter at 390px. Sizing each line separately makes all three span the full width, which is what the handoff asks for. |
+   | Page `<h1>` | `20vw` | `18.7vw`, full-bleed | "SERVICES" is 5.19x; 20vw crops it. |
+   | Section `<h2>` | `13.5vw` | `10.7vw` | "EXCEPTIONAL" is 8.02x. Section heads sit in the text column rather than breaking the gutter. |
+
+   The per-line hero multipliers are `100 / (ink width per px of font size)`
+   for each word, less a 3% safety margin. **If the headline wording changes,
+   they must be re-measured** or the lines will no longer align.
+
+   Two other fixes: full-width CTA buttons drop the desktop `white-space:
+   nowrap` (the long label's min-content width would push its grid parent wider
+   than a 360px screen), and collapsed grid children get `min-width: 0` so the
+   gutter-breaking images can't stretch their column past the screen.
+
+   The ecosystem panel is a `<figure>`, so it needs `margin: 0` — the browser
+   default of `1em 40px` was leaving it inset from its grid cell instead of
+   filling it, on every viewport.
+
 3. **Accessibility.** The accordion has real `aria-expanded` / `aria-controls`
    and its triggers sit inside headings; there is a skip link; the marquee has a
    readable list behind it; the hero animation, marquee, background blur and
