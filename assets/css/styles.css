@@ -1,0 +1,1310 @@
+/* ============================================================================
+   Evans Marketing — global stylesheet
+   ----------------------------------------------------------------------------
+   Order:  1. tokens  2. base  3. layout  4. header/footer  5. components
+           6. page sections  7. responsive
+   The design reference used inline styles; everything is extracted here so
+   there is exactly one place to change a colour, size or space.
+   ========================================================================== */
+
+/* 1. TOKENS ---------------------------------------------------------------- */
+
+:root {
+  /* Colour */
+  --ink:        #121110;   /* page frame, dark grounds, hairlines, buttons     */
+  --chocolate:  #3B2418;   /* ecosystem panel, contact ground                  */
+  --cream:      #FAF5EA;   /* primary light ground / text on dark              */
+  --sand-grey:  #DED3C4;   /* secondary light ground                           */
+  --warm-sand:  #EFE7DA;   /* open accordion row, slab base, copy on dark      */
+  --sand:       #C4A47C;   /* accent on dark grounds, light-button hover       */
+  --red:        #B4322A;   /* the only saturated colour                        */
+  --body-brown: #33291F;   /* body copy on light grounds                       */
+  --deep-brown: #241C14;   /* accordion panel copy                             */
+  --label-grey: #8E8175;   /* small-caps labels on light grounds               */
+  --label-cream:#6B5F52;   /* 10px tracked caps on the cream hero ground       */
+  --light-grey: #C9BCAE;   /* small-caps labels on dark grounds                */
+  --near-cream: #F2EADF;   /* italic standfirsts on dark grounds               */
+
+  /* Hairlines and washes */
+  --rule-light-20: rgba(18, 17, 16, 0.2);
+  --rule-light-28: rgba(18, 17, 16, 0.28);
+  --rule-light-40: rgba(18, 17, 16, 0.4);
+  --rule-dark-20:  rgba(250, 245, 234, 0.2);
+  --rule-dark-24:  rgba(250, 245, 234, 0.24);
+  --rule-dark-28:  rgba(250, 245, 234, 0.28);
+  --rule-dark-30:  rgba(250, 245, 234, 0.3);
+  --rule-dark-55:  rgba(250, 245, 234, 0.55);
+
+  /* Type */
+  --display: "Archivo Black", Impact, "Haettenschweiler", sans-serif;
+  --serif:   "Bodoni Moda", "Didot", Georgia, serif;
+  --sans:    Archivo, Helvetica, Arial, sans-serif;
+
+  /* Spacing */
+  --pad-x:      34px;  /* standard section gutter        */
+  --pad-x-wide: 40px;  /* centred quote / slab sections  */
+}
+
+/* 2. BASE ------------------------------------------------------------------ */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+p { font-weight: 400; }
+
+a {
+  color: var(--red);
+  text-decoration: none;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+a:hover { color: var(--ink); }
+
+img { max-width: 100%; }
+
+input, textarea, button, select { font-family: inherit; }
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Visible only when tabbed to — lets keyboard users jump the nav. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 14px 20px;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.skip-link:focus {
+  left: 0;
+  color: var(--cream);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 3. LAYOUT ---------------------------------------------------------------- */
+
+/* The dark page shows through the 1px gaps as hairline rules between
+   full-bleed sections. No rounded corners, no shadows anywhere. */
+.page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--ink);
+  overflow-x: hidden;
+}
+
+.section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* <main> is a flex child of .page, so it needs the same column + 1px gap for
+   the hairlines between its sections to survive. */
+.page > main {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Film grain. The reference used an inline SVG feTurbulence filter; a small
+   tiling texture is the same effect at a fraction of the cost. */
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("../img/grain.png");
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+  opacity: 0.12;
+}
+.grain--16 { opacity: 0.16; }
+.grain--20 { opacity: 0.2; }
+.grain--screen {
+  mix-blend-mode: screen;
+  opacity: 0.26;
+}
+
+/* Anything that must sit above a grain layer or a background image. */
+.layer { position: relative; }
+
+/* 4. HEADER / FOOTER ------------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  padding: 20px var(--pad-x);
+  background: var(--cream);
+  border-bottom: 1px solid var(--ink);
+}
+
+.site-nav {
+  display: flex;
+  gap: 24px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.site-nav a {
+  color: var(--ink);
+  padding-bottom: 3px;
+  border-bottom: 1px solid transparent;
+}
+.site-nav a:hover { color: var(--red); }
+.site-nav a[aria-current="page"] {
+  color: var(--red);
+  border-bottom-color: var(--red);
+}
+
+.wordmark {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(19px, 2.1vw, 28px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+  text-align: center;
+}
+.wordmark:hover { color: var(--red); }
+
+.header-cta {
+  display: flex;
+  justify-content: flex-end;
+}
+/* Deliberately a hairline link, not a button. */
+.link-rule {
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--ink);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.link-rule:hover {
+  color: var(--red);
+  border-bottom-color: var(--red);
+}
+
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 26px var(--pad-x);
+  background: var(--ink);
+  color: var(--light-grey);
+  border-top: 1px solid var(--rule-dark-20);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.site-footer .footer-mark {
+  font-family: var(--serif);
+  font-size: 19px;
+  letter-spacing: 0.2em;
+  color: var(--cream);
+}
+
+/* 5. COMPONENTS ------------------------------------------------------------ */
+
+/* Running head: a label, a hairline rule and a folio number. */
+.runhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule-light-28);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.runhead .folio { color: var(--label-grey); }
+
+.runhead--dark {
+  padding-bottom: 16px;
+  border-bottom-color: var(--rule-dark-24);
+  color: var(--sand);
+}
+.runhead--dark .folio { color: var(--light-grey); }
+
+.runhead--strong {
+  border-bottom-color: var(--rule-light-40);
+  color: var(--ink);
+}
+.runhead--strong .folio { color: var(--ink); }
+
+/* Headings */
+.h-display {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+.h-section {
+  margin: 18px 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(34px, 5.6vw, 92px);
+  line-height: 0.84;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+/* Italic standfirst on a dark ground */
+.standfirst {
+  margin: 0;
+  max-width: 620px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(19px, 1.9vw, 27px);
+  line-height: 1.4;
+  color: var(--near-cream);
+}
+
+/* Small tracked caps */
+.caps {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.caps--label {
+  font-weight: 600;
+  letter-spacing: 0.28em;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 20px 34px;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+.btn:hover { background: var(--red); color: var(--cream); }
+
+.btn--light { background: var(--cream); color: var(--ink); }
+.btn--light:hover { background: var(--sand); color: var(--ink); }
+
+/* Pull-quote band (Home + About) */
+.quote-band {
+  min-height: 620px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px var(--pad-x-wide);
+  background: var(--sand-grey);
+}
+.quote-band__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 6%;
+  filter: blur(10px) saturate(0.9);
+  transform: scale(1.18);
+}
+.quote-band__wash {
+  position: absolute;
+  inset: 0;
+  background: rgba(240, 232, 220, 0.44);
+}
+.quote-band blockquote {
+  position: relative;
+  margin: 0;
+  max-width: 860px;
+  text-align: center;
+}
+.quote-band p {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(26px, 3.6vw, 58px);
+  line-height: 1.24;
+  letter-spacing: -0.01em;
+  color: var(--red);
+  text-wrap: balance;
+}
+.quote-band footer {
+  padding-top: 26px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--body-brown);
+}
+
+/* Brands marquee (Home + Contact) */
+.brands { padding: 58px 0 48px; background: var(--cream); }
+.brands__head {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 0 var(--pad-x) 36px;
+}
+.brands__head .h-section { margin: 0; }
+
+.marquee {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 30px 0;
+  border-top: 1px solid var(--rule-light-20);
+  border-bottom: 1px solid var(--rule-light-20);
+}
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 52s linear infinite;
+}
+.marquee__track--reverse {
+  animation-duration: 64s;
+  animation-direction: reverse;
+}
+/* The list is repeated twice inside the track, so -50% is a seamless loop. */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+
+.marquee__list {
+  display: flex;
+  align-items: center;
+  font-family: var(--display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--body-brown);
+}
+.marquee__list span { padding: 0 40px; }
+.marquee__track--reverse .marquee__list { color: var(--label-grey); }
+
+.brands__categories {
+  position: relative;
+  padding: 24px var(--pad-x) 0;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--label-grey);
+}
+
+/* Closing CTA band (all four pages) */
+.cta-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 40px;
+  padding: 56px var(--pad-x);
+  background: var(--cream);
+  border-top: 1px solid var(--ink);
+}
+.cta-band p {
+  margin: 0;
+  max-width: 520px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(22px, 2.6vw, 40px);
+  line-height: 1.22;
+  color: var(--ink);
+}
+
+/* 6. PAGE SECTIONS --------------------------------------------------------- */
+
+/* --- Home: hero ---------------------------------------------------------- */
+
+.hero {
+  padding: 56px var(--pad-x) 44px;
+  background: var(--cream);
+}
+.hero__meta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--label-cream);
+  animation: metaRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+.hero__meta .accent { color: var(--red); }
+
+/* The parallax slab. Every JS write goes to this wrapper's transform and
+   opacity — never to the headline, which owns the CSS animations. */
+.hero__slab {
+  position: relative;
+  margin: 22px 0 0;
+  will-change: transform;
+}
+
+/* The letterforms are filled with a photograph via background-clip: text, and
+   that fill never stops drifting. The text stroke is a safety net: if
+   background-clip: text is unsupported, the words still read. */
+.hero__title {
+  position: relative;
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(58px, 15.6vw, 250px);
+  line-height: 0.76;
+  letter-spacing: -0.045em;
+  text-align: center;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 0.75px rgba(18, 17, 16, 0.7);
+  background-image:
+    linear-gradient(rgba(18, 17, 16, 0.4), rgba(18, 17, 16, 0.4)),
+    url("../img/hero-type-fabric.jpg");
+  /* These must equal the 0% keyframe of fillDrift — they are what paints
+     during its 1.3s delay. */
+  background-size: 100% 100%, 150% auto;
+  background-position: center, 30% 46%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation:
+    typeDevelop 1.25s cubic-bezier(0.16, 1, 0.3, 1) both,
+    fillDrift 26s ease-in-out 1.3s infinite alternate;
+}
+
+/* Red scan line that "develops" the type on load. It bleeds past both gutters
+   so it reads as crossing the whole page; .hero clips the overhang. */
+.hero__scan {
+  position: absolute;
+  left: calc(-1 * var(--pad-x));
+  right: calc(-1 * var(--pad-x));
+  top: 0;
+  height: 2px;
+  background: var(--red);
+  box-shadow: 0 0 26px 6px rgba(180, 50, 42, 0.35);
+  pointer-events: none;
+  animation: scanSweep 1.35s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+@keyframes metaRise {
+  from { transform: translateY(14px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Reveals the headline top-to-bottom, like a photograph coming up in a tray. */
+@keyframes typeDevelop {
+  0%   { clip-path: inset(0 0 100% 0); opacity: 0.15; }
+  100% { clip-path: inset(0 0 0 0);    opacity: 1; }
+}
+
+/* Slow Ken Burns of the fill inside the letterforms. Both background layers
+   must be listed in every keyframe or the darkening wash snaps. */
+@keyframes fillDrift {
+  0%   { background-position: center, 30% 46%; background-size: 100% 100%, 150% auto; }
+  50%  { background-position: center, 52% 34%; background-size: 100% 100%, 178% auto; }
+  100% { background-position: center, 18% 58%; background-size: 100% 100%, 158% auto; }
+}
+
+@keyframes scanSweep {
+  0%   { top: 0%;   opacity: 0; }
+  6%   { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.hero__foot {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: end;
+  gap: 44px;
+  padding-top: 56px;
+}
+.hero__intro {
+  margin: 0;
+  max-width: 560px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--body-brown);
+}
+.hero__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 30px;
+}
+
+.stats { display: flex; gap: 44px; }
+.stat__figure {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1;
+}
+/* Reference used #C9BCAE here, a light-on-light tone left over from an earlier
+   dark hero — 1.7:1 on cream. The hero-animation spec names #6B5F52 for 10px
+   tracked caps on this ground. */
+.stat__label {
+  padding-top: 8px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--label-cream);
+}
+
+/* --- Home: customized solutions ------------------------------------------ */
+
+.solutions {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  background: var(--cream);
+}
+.solutions__copy { position: relative; padding: 76px 44px 68px var(--pad-x); }
+.solutions__body {
+  columns: 2;
+  column-gap: 34px;
+  column-rule: 1px solid var(--rule-light-20);
+  max-width: 660px;
+  padding-top: 32px;
+}
+.solutions__body p {
+  margin: 0 0 15px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--body-brown);
+}
+.solutions__body p:last-child { margin-bottom: 0; }
+.dropcap {
+  float: left;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 54px;
+  line-height: 0.76;
+  padding: 5px 8px 0 0;
+  color: var(--red);
+}
+.solutions__copy .btn { margin-top: 38px; }
+
+.ecosystem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 44px var(--pad-x);
+  background: var(--chocolate);
+}
+.ecosystem__labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--light-grey);
+}
+.ecosystem__labels .accent { color: var(--sand); }
+.ecosystem img { width: 100%; height: auto; display: block; }
+.ecosystem figcaption,
+.ecosystem__caption {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--warm-sand);
+}
+
+/* --- Home: "excellence" slab --------------------------------------------- */
+
+.slab {
+  padding: 132px var(--pad-x-wide);
+  background: var(--warm-sand);
+  color: var(--ink);
+}
+.slab__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+.slab__wash {
+  position: absolute;
+  inset: 0;
+  background: rgba(247, 241, 233, 0.46);
+}
+.slab__inner {
+  position: relative;
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: center;
+}
+.slab__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.slab p {
+  margin: 24px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(28px, 3.8vw, 62px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* --- Services: masthead --------------------------------------------------- */
+
+.masthead {
+  padding: 64px var(--pad-x) 56px;
+  background: var(--ink);
+  color: var(--cream);
+}
+.masthead__title {
+  margin: 38px 0 0;
+  font-size: clamp(48px, 11.4vw, 200px);
+}
+.masthead__foot {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 44px;
+  align-items: end;
+  padding-top: 40px;
+}
+.tags {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--light-grey);
+}
+
+/* --- Services: accordion -------------------------------------------------- */
+
+.index { padding: 12px var(--pad-x) 56px; background: var(--cream); }
+.index__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 34px 0 18px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.index__head .muted { color: var(--label-grey); }
+
+.acc-item {
+  border-top: 1px solid var(--rule-light-28);
+  padding: 0 22px;
+  background: transparent;
+  transition: background 150ms ease;
+}
+.acc-item:last-of-type { border-bottom: 1px solid var(--rule-light-28); }
+.acc-item.is-open { background: var(--warm-sand); }
+
+/* The trigger sits inside an <h2> so the twelve services form a real outline;
+   the heading itself carries no visual styling. */
+.acc-item h2 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.acc-trigger {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 22px;
+  align-items: center;
+  width: 100%;
+  padding: 26px 0;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+.acc-trigger:hover { color: var(--red); }
+.acc-num {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--red);
+}
+.acc-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(20px, 2.4vw, 34px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: inherit; /* so it takes the button ink and the red hover */
+}
+.acc-marker {
+  font-family: var(--serif);
+  font-size: 26px;
+  line-height: 1;
+  color: var(--label-grey);
+}
+
+/* Toggled by class, never by the `hidden` attribute — `[hidden]{display:none}`
+   would lose to a `display:grid` set here. */
+.acc-panel {
+  display: none;
+  grid-template-columns: 52px minmax(0, 640px);
+  gap: 22px;
+  padding: 0 0 30px;
+}
+.acc-item.is-open .acc-panel { display: grid; }
+.acc-panel p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--deep-brown);
+}
+.acc-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.channel-tags {
+  display: flex;
+  gap: 26px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--label-grey);
+}
+
+/* --- Services: process ---------------------------------------------------- */
+
+.process { padding: 70px var(--pad-x) 62px; background: var(--sand-grey); }
+.process__head {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: start;
+  padding-bottom: 48px;
+}
+.process__head .h-section {
+  margin: 20px 0 0;
+  font-size: clamp(32px, 5.2vw, 84px);
+  letter-spacing: -0.035em;
+}
+.process__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 26px;
+}
+.process__intro p {
+  margin: 0;
+  max-width: 440px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--body-brown);
+}
+.process__steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+}
+.step {
+  padding-top: 20px;
+  border-top: 1px solid var(--rule-light-40);
+}
+.step__num {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1;
+}
+.step h3 {
+  margin: 12px 0 10px;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  min-height: 2.4em; /* keeps titles baseline-aligned across the row */
+}
+.step p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--body-brown);
+}
+
+/* --- About: masthead + founder spread ------------------------------------- */
+
+.masthead--about { padding: 64px var(--pad-x) 52px; }
+.masthead--about .masthead__title {
+  margin: 36px 0 0;
+  font-size: clamp(44px, 9.4vw, 164px);
+  line-height: 0.82;
+  letter-spacing: -0.04em;
+}
+.masthead--about .standfirst { margin-top: 30px; }
+
+.founder {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+}
+.founder__portrait {
+  position: relative;
+  min-height: 660px;
+  background: var(--sand-grey);
+  overflow: hidden;
+}
+.founder__portrait img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+  filter: grayscale(1) contrast(1.1);
+}
+.founder__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  background: var(--ink);
+}
+.founder__caption .name {
+  font-family: var(--serif);
+  font-size: 21px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+.founder__caption .role {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+
+.founder__bio {
+  position: relative;
+  padding: 76px 44px 60px;
+  background: var(--cream);
+  overflow: hidden;
+}
+.founder__bio h2 {
+  margin: 16px 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 62px);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.founder__roles {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 20px 0 0;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--label-grey);
+}
+.founder__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 30px;
+}
+.founder__copy p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--body-brown);
+}
+.founder__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--rule-light-20);
+}
+.founder__stats .stat__figure { font-size: 30px; }
+.founder__stats .stat__range {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* --- About: exceptional strategies ---------------------------------------- */
+
+.exceptional { padding: 84px var(--pad-x) 76px; background: var(--sand-grey); }
+.exceptional__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: start;
+}
+.exceptional__left {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+.exceptional__left .h-section { margin: 0; }
+.exceptional__left img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  display: block;
+}
+.exceptional__right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.exceptional__right p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--body-brown);
+}
+.engagement {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 14px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule-light-28);
+}
+.engagement__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.engagement__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* --- Contact -------------------------------------------------------------- */
+
+.contact {
+  padding: 80px var(--pad-x) 68px;
+  background: var(--chocolate);
+  color: var(--cream);
+}
+.contact__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+}
+.contact h2 {
+  margin: 18px 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(30px, 4.2vw, 70px);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.contact h2 .accent { color: var(--sand); }
+.contact__lede {
+  margin: 22px 0 0;
+  max-width: 420px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--warm-sand);
+}
+.contact__details {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 36px;
+  padding-top: 26px;
+  border-top: 1px solid var(--rule-dark-28);
+}
+.contact__details a {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  color: var(--cream);
+}
+.contact__details a:hover { color: var(--sand); }
+.contact__details .place {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--light-grey);
+}
+
+.contact-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 26px;
+  align-content: start;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--light-grey);
+}
+.field--wide { grid-column: span 2; }
+.field input,
+.field textarea {
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid var(--rule-dark-55);
+  background: transparent;
+  font-size: 15px;
+  color: var(--cream);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+.field textarea { resize: none; }
+.field input:focus,
+.field textarea:focus { border-bottom-color: var(--sand); }
+.field input::placeholder,
+.field textarea::placeholder { color: rgba(250, 245, 234, 0.4); }
+
+.field.has-error input,
+.field.has-error textarea { border-bottom-color: var(--red); }
+.field__error {
+  min-height: 0;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.field__error:empty { display: none; }
+
+.field__counter {
+  align-self: flex-end;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--light-grey);
+}
+
+.form__foot {
+  grid-column: span 2;
+  padding-top: 10px;
+}
+.form__status {
+  grid-column: span 2;
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--sand);
+}
+.form__status:empty { display: none; }
+
+/* 7. RESPONSIVE ------------------------------------------------------------ */
+/* The reference had no breakpoints; these are authored here. */
+
+@media (max-width: 1080px) {
+  .process__steps { grid-template-columns: repeat(3, 1fr); }
+  .process__head { gap: 40px; }
+  .exceptional__grid,
+  .contact__grid { gap: 40px; }
+  .solutions__copy { padding: 60px 34px 56px; }
+  .founder__bio { padding: 60px 34px 52px; }
+}
+
+@media (max-width: 860px) {
+  /* Header stacks: wordmark on top, nav and CTA on a second row. */
+  .site-header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 16px;
+    padding: 18px var(--pad-x);
+  }
+  .site-nav { order: 2; flex-wrap: wrap; justify-content: center; gap: 20px; }
+  .wordmark { order: 1; }
+  .header-cta { order: 3; justify-content: center; }
+
+  /* Every fixed multi-column grid collapses to one column. */
+  .hero__foot,
+  .solutions,
+  .masthead__foot,
+  .process__head,
+  .founder,
+  .exceptional__grid,
+  .contact__grid,
+  .cta-band { grid-template-columns: 1fr; }
+
+  .hero__foot { gap: 34px; padding-top: 40px; }
+  .solutions__body { columns: 1; column-rule: none; }
+  .process__steps { grid-template-columns: repeat(2, 1fr); }
+  .step h3 { min-height: 0; }
+
+  .founder__portrait { min-height: 460px; }
+  .cta-band { gap: 28px; justify-items: start; }
+  .acc-panel { grid-template-columns: 1fr; gap: 0; }
+  .acc-panel > .acc-spacer { display: none; }
+  .quote-band { min-height: 460px; padding: 64px var(--pad-x); }
+  .slab { padding: 90px var(--pad-x); }
+}
+
+@media (max-width: 560px) {
+  :root { --pad-x: 20px; --pad-x-wide: 20px; }
+
+  .hero { padding: 40px var(--pad-x) 36px; }
+  .hero__meta { gap: 10px; }
+  .hero__title { font-size: clamp(46px, 16.5vw, 90px); }
+  .stats { gap: 28px; }
+  .btn { padding: 18px 26px; font-size: 11.5px; letter-spacing: 0.16em; }
+
+  .process__steps { grid-template-columns: 1fr; }
+  .contact-form { grid-template-columns: 1fr; }
+  .field--wide { grid-column: span 1; }
+  .form__foot,
+  .form__status { grid-column: span 1; }
+
+  /* The trigger sits inside an <h2> so the twelve services form a real outline;
+   the heading itself carries no visual styling. */
+.acc-item h2 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.acc-trigger { grid-template-columns: 34px 1fr auto; gap: 14px; }
+  .acc-item { padding: 0 4px; }
+  .marquee__list { font-size: 18px; }
+  .marquee__list span { padding: 0 24px; }
+  .exceptional__left img { height: 240px; }
+  .founder__stats { grid-template-columns: 1fr 1fr; }
+  .slab { padding: 70px var(--pad-x); }
+  .site-footer { gap: 12px; }
+}
+
+/* Respect a reduced-motion preference: stop the marquees, drop smooth scroll,
+   and swap the heavy background blur for a plain wash. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee__track { animation: none; }
+  .quote-band__bg { filter: none; transform: none; opacity: 0.5; }
+  .hero__title,
+  .hero__meta {
+    animation: none !important;
+    opacity: 1 !important;
+    clip-path: none !important;
+  }
+  .hero__scan { display: none !important; }
+  * { transition-duration: 0.01ms !important; }
+}
