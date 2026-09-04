@@ -64,6 +64,13 @@ body {
   font-family: var(--sans);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  /* Bodoni Moda is a variable font with an optical-size axis (6-96). Chromium's
+     default `auto` pins opsz to the rendered font size, and above roughly 16 the
+     Didone hairlines go sub-pixel — em dashes and hyphens disappear completely,
+     so "full-funnel" reads as "full funnel". Pinning to the font's default
+     instance (opsz 11) keeps that punctuation visible at every size we use.
+     Inherited, and a no-op for Archivo, which has no opsz axis. */
+  font-optical-sizing: none;
 }
 
 p { font-weight: 400; }
@@ -177,23 +184,27 @@ input, textarea, button, select { font-family: inherit; }
   border-bottom: 1px solid var(--ink);
 }
 
+/* State is shown by weight, not colour: the active page is Archivo Black in
+   ink, the rest are Archivo 600 in the light-ground label grey. No underline,
+   no accent colour. */
 .site-nav {
   display: flex;
-  gap: 24px;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  align-items: baseline;
+  gap: 26px;
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 .site-nav a {
-  color: var(--ink);
-  padding-bottom: 3px;
-  border-bottom: 1px solid transparent;
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--label-cream);
 }
-.site-nav a:hover { color: var(--red); }
+.site-nav a:hover { color: var(--ink); }
 .site-nav a[aria-current="page"] {
-  color: var(--red);
-  border-bottom-color: var(--red);
+  font-family: var(--display);
+  font-weight: 400;
+  color: var(--ink);
 }
 
 .wordmark {
@@ -213,22 +224,6 @@ input, textarea, button, select { font-family: inherit; }
   display: flex;
   justify-content: flex-end;
 }
-/* Deliberately a hairline link, not a button. */
-.link-rule {
-  padding-bottom: 5px;
-  border-bottom: 1px solid var(--ink);
-  color: var(--ink);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.link-rule:hover {
-  color: var(--red);
-  border-bottom-color: var(--red);
-}
-
 .site-footer {
   display: flex;
   align-items: center;
@@ -253,35 +248,6 @@ input, textarea, button, select { font-family: inherit; }
 
 /* 5. COMPONENTS ------------------------------------------------------------ */
 
-/* Running head: a label, a hairline rule and a folio number. */
-.runhead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 20px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--rule-light-28);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--red);
-}
-.runhead .folio { color: var(--label-grey); }
-
-.runhead--dark {
-  padding-bottom: 16px;
-  border-bottom-color: var(--rule-dark-24);
-  color: var(--sand);
-}
-.runhead--dark .folio { color: var(--light-grey); }
-
-.runhead--strong {
-  border-bottom-color: var(--rule-light-40);
-  color: var(--ink);
-}
-.runhead--strong .folio { color: var(--ink); }
-
 /* Headings */
 .h-display {
   margin: 0;
@@ -292,7 +258,7 @@ input, textarea, button, select { font-family: inherit; }
   text-transform: uppercase;
 }
 .h-section {
-  margin: 18px 0 0;
+  margin: 0;
   font-family: var(--display);
   font-weight: 400;
   font-size: clamp(34px, 5.6vw, 92px);
@@ -344,6 +310,13 @@ input, textarea, button, select { font-family: inherit; }
 
 .btn--light { background: var(--cream); color: var(--ink); }
 .btn--light:hover { background: var(--sand); color: var(--ink); }
+
+/* Header CTA: a smaller sibling of the page-level button. */
+.btn--compact {
+  padding: 13px 22px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
 
 /* Pull-quote band (Home + About) */
 .quote-band {
@@ -484,27 +457,11 @@ input, textarea, button, select { font-family: inherit; }
   padding: 56px var(--pad-x) 44px;
   background: var(--cream);
 }
-.hero__meta {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--label-cream);
-  animation: metaRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
-}
-.hero__meta .accent { color: var(--red); }
-
 /* The parallax slab. Every JS write goes to this wrapper's transform and
    opacity — never to the headline, which owns the CSS animations. */
 .hero__slab {
   position: relative;
-  margin: 22px 0 0;
+  margin: 0;
   will-change: transform;
 }
 
@@ -549,11 +506,6 @@ input, textarea, button, select { font-family: inherit; }
   box-shadow: 0 0 26px 6px rgba(180, 50, 42, 0.35);
   pointer-events: none;
   animation: scanSweep 1.35s cubic-bezier(0.65, 0, 0.35, 1) both;
-}
-
-@keyframes metaRise {
-  from { transform: translateY(14px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
 }
 
 /* Reveals the headline top-to-bottom, like a photograph coming up in a tray. */
@@ -659,20 +611,7 @@ input, textarea, button, select { font-family: inherit; }
   gap: 28px;
   padding: 44px var(--pad-x);
   background: var(--chocolate);
-}
-.ecosystem__labels {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--light-grey);
-}
-.ecosystem__labels .accent { color: var(--sand); }
-.ecosystem img { width: 100%; height: auto; display: block; }
+}.ecosystem img { width: 100%; height: auto; display: block; }
 .ecosystem figcaption,
 .ecosystem__caption {
   margin: 0;
@@ -708,16 +647,8 @@ input, textarea, button, select { font-family: inherit; }
   max-width: 1080px;
   margin: 0 auto;
   text-align: center;
-}
-.slab__label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--red);
-}
-.slab p {
-  margin: 24px 0 0;
+}.slab p {
+  margin: 0;
   font-family: var(--serif);
   font-style: italic;
   font-weight: 500;
@@ -735,7 +666,7 @@ input, textarea, button, select { font-family: inherit; }
   color: var(--cream);
 }
 .masthead__title {
-  margin: 38px 0 0;
+  margin: 0;
   font-size: clamp(48px, 11.4vw, 200px);
 }
 .masthead__foot {
@@ -759,20 +690,6 @@ input, textarea, button, select { font-family: inherit; }
 /* --- Services: accordion -------------------------------------------------- */
 
 .index { padding: 12px var(--pad-x) 56px; background: var(--cream); }
-.index__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 34px 0 18px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--red);
-}
-.index__head .muted { color: var(--label-grey); }
-
 .acc-item {
   border-top: 1px solid var(--rule-light-28);
   padding: 0 22px;
@@ -792,7 +709,7 @@ input, textarea, button, select { font-family: inherit; }
 
 .acc-trigger {
   display: grid;
-  grid-template-columns: 52px 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 22px;
   align-items: center;
   width: 100%;
@@ -804,14 +721,7 @@ input, textarea, button, select { font-family: inherit; }
   cursor: pointer;
   transition: color 150ms ease;
 }
-.acc-trigger:hover { color: var(--red); }
-.acc-num {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  color: var(--red);
-}
-.acc-title {
+.acc-trigger:hover { color: var(--red); }.acc-title {
   font-family: var(--display);
   font-weight: 400;
   font-size: clamp(20px, 2.4vw, 34px);
@@ -831,7 +741,7 @@ input, textarea, button, select { font-family: inherit; }
    would lose to a `display:grid` set here. */
 .acc-panel {
   display: none;
-  grid-template-columns: 52px minmax(0, 640px);
+  grid-template-columns: minmax(0, 680px);
   gap: 22px;
   padding: 0 0 30px;
 }
@@ -869,7 +779,7 @@ input, textarea, button, select { font-family: inherit; }
   padding-bottom: 48px;
 }
 .process__head .h-section {
-  margin: 20px 0 0;
+  margin: 0;
   font-size: clamp(32px, 5.2vw, 84px);
   letter-spacing: -0.035em;
 }
@@ -922,7 +832,7 @@ input, textarea, button, select { font-family: inherit; }
 
 .masthead--about { padding: 64px var(--pad-x) 52px; }
 .masthead--about .masthead__title {
-  margin: 36px 0 0;
+  margin: 0;
   font-size: clamp(44px, 9.4vw, 164px);
   line-height: 0.82;
   letter-spacing: -0.04em;
@@ -983,7 +893,7 @@ input, textarea, button, select { font-family: inherit; }
   overflow: hidden;
 }
 .founder__bio h2 {
-  margin: 16px 0 0;
+  margin: 0;
   font-family: var(--display);
   font-weight: 400;
   font-size: clamp(34px, 4vw, 62px);
@@ -1072,15 +982,7 @@ input, textarea, button, select { font-family: inherit; }
   margin-top: 14px;
   padding-top: 22px;
   border-top: 1px solid var(--rule-light-28);
-}
-.engagement__label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-.engagement__list {
+}.engagement__list {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1106,7 +1008,7 @@ input, textarea, button, select { font-family: inherit; }
   gap: 64px;
 }
 .contact h2 {
-  margin: 18px 0 0;
+  margin: 0;
   font-family: var(--display);
   font-weight: 400;
   font-size: clamp(30px, 4.2vw, 70px);
@@ -1254,8 +1156,7 @@ input, textarea, button, select { font-family: inherit; }
 
   .founder__portrait { min-height: 460px; }
   .cta-band { gap: 28px; justify-items: start; }
-  .acc-panel { grid-template-columns: 1fr; gap: 0; }
-  .acc-panel > .acc-spacer { display: none; }
+  .acc-panel { gap: 0; }
   .quote-band { min-height: 460px; padding: 64px var(--pad-x); }
   .slab { padding: 90px var(--pad-x); }
 }
@@ -1264,7 +1165,6 @@ input, textarea, button, select { font-family: inherit; }
   :root { --pad-x: 20px; --pad-x-wide: 20px; }
 
   .hero { padding: 40px var(--pad-x) 36px; }
-  .hero__meta { gap: 10px; }
   .hero__title { font-size: clamp(46px, 16.5vw, 90px); }
   .stats { gap: 28px; }
   .btn { padding: 18px 26px; font-size: 11.5px; letter-spacing: 0.16em; }
@@ -1275,15 +1175,7 @@ input, textarea, button, select { font-family: inherit; }
   .form__foot,
   .form__status { grid-column: span 1; }
 
-  /* The trigger sits inside an <h2> so the twelve services form a real outline;
-   the heading itself carries no visual styling. */
-.acc-item h2 {
-  margin: 0;
-  font-size: inherit;
-  font-weight: inherit;
-}
-
-.acc-trigger { grid-template-columns: 34px 1fr auto; gap: 14px; }
+  .acc-trigger { gap: 14px; }
   .acc-item { padding: 0 4px; }
   .marquee__list { font-size: 18px; }
   .marquee__list span { padding: 0 24px; }
@@ -1299,8 +1191,7 @@ input, textarea, button, select { font-family: inherit; }
   html { scroll-behavior: auto; }
   .marquee__track { animation: none; }
   .quote-band__bg { filter: none; transform: none; opacity: 0.5; }
-  .hero__title,
-  .hero__meta {
+  .hero__title {
     animation: none !important;
     opacity: 1 !important;
     clip-path: none !important;
